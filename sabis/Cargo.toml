@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 tokio = { version = "1", features = ["full"] }
 bytes = "1.0"
+socket2 = "0.4.2"
+pnet = "0.28.0"

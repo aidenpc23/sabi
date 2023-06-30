@@ -1,18 +1,21 @@
-use tokio::net::TcpStream;
-use tokio::io::AsyncWriteExt;
 use std::env;
+use std::error::Error;
+use std::io::Write;
+use std::net::{SocketAddrV6, TcpStream, Ipv6Addr};
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
+    
     let args: Vec<String> = env::args().collect();
 
     if args.len() != 3 {
-        eprintln!("Usage: sender <host:port> <message>");
+        eprintln!("Usage: sabi send -h <host> -p <port> -m <message> -f <file>");
         return Ok(());
     }
+    
+    let sock: SocketAddrV6 = SocketAddrV6::new(args[1].parse()?, args[2].parse::<u16>().unwrap(), 0, 3);
+    let mut strm = TcpStream::connect(sock)?;
 
-    let mut stream = TcpStream::connect(&args[1]).await?;
-    stream.write_all(args[2].as_bytes()).await?;
+    strm.write_all(&args[3].as_bytes())?;
     println!("Message sent");
 
     Ok(())
